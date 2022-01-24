@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CalculatorDemo.Core;
 using CalculatorDemo.MVVM.Model;
+using ExpressionEvalutor;
 
 namespace CalculatorDemo.MVVM.ViewModel
 {
-    public class MainViewModel
+    public class MainViewModel : ObservableObject
     {
+        // コマンド
         public RelayCommand ZeroClick { get; set; }
         public RelayCommand OneClick { get; set; }
         public RelayCommand TwoClick { get; set; }
@@ -22,64 +25,226 @@ namespace CalculatorDemo.MVVM.ViewModel
         public RelayCommand EightClick { get; set; }
         public RelayCommand NineClick { get; set; }
 
-        public ResultModel ResultModel { get; set; }
+        public RelayCommand DotClick { get; set; }
+        public RelayCommand AdditionClick { get; set; }
+        public RelayCommand SubtractClick { get; set; }
+        public RelayCommand MultiplyClick { get; set; }
+        public RelayCommand DivideClick { get; set; }
+        public RelayCommand ModuloClick { get; set; }
+        public RelayCommand EqualClick { get; set; }
+        public RelayCommand AllClearClick { get; set; }
+
+        public ExpressionModel Expression { get; set; }
+        public ExpressionHistoryModel ExpressionHistory { get; set; }
+
+        public string CurrentTerm { get; set; }
+
+        private string _resultLabel;
+        public string ResultLabel
+        {
+            get => _resultLabel;
+            set
+            {
+                _resultLabel = value;
+                OnPropertyChanged();
+            }
+        }
+        public string LastResultLabel
+        {
+            get
+            {
+                if (ExpressionHistory.LastExpression != null)
+                {
+                    return "ok";
+                }
+                return "";
+            }
+        }
+
+        private enum ButtonKind
+        {
+            Zero = 0,
+            One = 1,
+            Two = 2,
+            Three = 3,
+            Four = 4,
+            Five = 5,
+            Six = 6,
+            Seven = 7,
+            Eight = 8,
+            Nine = 9,
+
+            Dot,
+            Addition,
+            Subtract,
+            Multiply,
+            Divide,
+            Modulo,
+            Equal,
+            AllClear
+        }
+
 
         public MainViewModel()
         {
-            ResultModel = new ResultModel
+            InputAllClear();
+
+            ExpressionHistory = new ExpressionHistoryModel()
             {
-                ResultLabel = "0"
+                ExpressionHistory = new ObservableCollection<ExpressionModel>()
             };
 
-            ZeroClick = new RelayCommand(o =>
-            {
-                Debug.Print("Zero");
-            });
 
-            OneClick = new RelayCommand(o =>
-            {
-                Debug.Print("One");
-            });
+            ZeroClick = new RelayCommand(o => InputButton(ButtonKind.Zero));
+            OneClick = new RelayCommand(o => InputButton(ButtonKind.One));
+            TwoClick = new RelayCommand(o => InputButton(ButtonKind.Two));
+            ThreeClick = new RelayCommand(o => InputButton(ButtonKind.Three));
+            FourClick = new RelayCommand(o => InputButton(ButtonKind.Four));
+            FiveClick = new RelayCommand(o => InputButton(ButtonKind.Five));
+            SixClick = new RelayCommand(o => InputButton(ButtonKind.Six));
+            SevenClick = new RelayCommand(o => InputButton(ButtonKind.Seven));
+            EightClick = new RelayCommand(o => InputButton(ButtonKind.Eight));
+            NineClick = new RelayCommand(o => InputButton(ButtonKind.Nine));
 
-            TwoClick = new RelayCommand(o =>
-            {
-                Debug.Print("Two");
-            });
+            DotClick = new RelayCommand(o => InputButton(ButtonKind.Dot));
+            AdditionClick = new RelayCommand(o => InputButton(ButtonKind.Addition));
+            SubtractClick = new RelayCommand(o => InputButton(ButtonKind.Subtract));
+            MultiplyClick = new RelayCommand(o => InputButton(ButtonKind.Multiply));
+            DivideClick = new RelayCommand(o => InputButton(ButtonKind.Divide));
+            ModuloClick = new RelayCommand(o => InputButton(ButtonKind.Modulo));
+            EqualClick = new RelayCommand(o => InputButton(ButtonKind.Equal));
+            AllClearClick = new RelayCommand(o => InputButton(ButtonKind.AllClear));
+        }
 
-            ThreeClick = new RelayCommand(o =>
-            {
-                Debug.Print("Three");
-            });
 
-            FourClick = new RelayCommand(o =>
-            {
-                Debug.Print("Four");
-            });
+        private int ButtonKindToNumber(ButtonKind kind)
+        {
+            return (int)kind;
+        }
 
-            FiveClick = new RelayCommand(o =>
+        private void InputButton(ButtonKind kind)
+        {
+            switch (kind)
             {
-                Debug.Print("Five");
-            });
+                case ButtonKind.Zero:
+                case ButtonKind.One:
+                case ButtonKind.Two:
+                case ButtonKind.Three:
+                case ButtonKind.Four:
+                case ButtonKind.Five:
+                case ButtonKind.Six:
+                case ButtonKind.Seven:
+                case ButtonKind.Eight:
+                case ButtonKind.Nine:
+                    InputNumber(kind);
+                    break;
 
-            SixClick = new RelayCommand(o =>
-            {
-                Debug.Print("Six");
-            });
+                case ButtonKind.Dot:
+                    InputDot();
+                    break;
 
-            SevenClick = new RelayCommand(o =>
-            {
-                Debug.Print("Seven");
-            });
+                case ButtonKind.Addition:
+                case ButtonKind.Subtract:
+                case ButtonKind.Multiply:
+                case ButtonKind.Divide:
+                case ButtonKind.Modulo:
+                    InputBinaryExpression(kind);
+                    break;
 
-            EightClick = new RelayCommand(o =>
-            {
-                Debug.Print("Eight");
-            });
 
-            NineClick = new RelayCommand(o =>
+                case ButtonKind.Equal:
+                    InputEqual();
+                    break;
+                case ButtonKind.AllClear:
+                    InputAllClear();
+                    break;
+            }
+        }
+
+        private void InputEqual()
+        {
+            if (char.IsDigit(ResultLabel.Last()))
             {
-                Debug.Print("Nine");
-            });
+                SyntaxTree syntaxTree = SyntaxTree.Parse(ResultLabel);
+                ResultLabel = new Evalutor(syntaxTree.Root).Evalute().ToString();
+                CurrentTerm = ResultLabel;
+            }
+        }
+
+        private void InputAllClear()
+        {
+            ResultLabel = "0";
+            CurrentTerm = "0";
+        }
+
+        private void InputBinaryExpression(ButtonKind kind)
+        {
+            if (CurrentTerm != "" &&
+                char.IsDigit(CurrentTerm.Last()))
+            {
+                if (kind == ButtonKind.Addition)
+                {
+                    ResultLabel += "+";
+                }
+                else if (kind == ButtonKind.Subtract)
+                {
+                    ResultLabel += "-";
+                }
+                else if (kind == ButtonKind.Multiply)
+                {
+                    ResultLabel += "*";
+                }
+                else if (kind == ButtonKind.Divide)
+                {
+                    ResultLabel += "/";
+                }
+                else if(kind == ButtonKind.Modulo)
+                {
+                    ResultLabel += "%";
+                }
+                else
+                {
+                    throw new Exception($"想定しないオペレータ {kind} が渡されました。");
+                }
+
+                CurrentTerm = "";
+            }
+        }
+
+        private void InputDot()
+        {
+            if (!CurrentTerm.Contains(".") &&
+                char.IsDigit(ResultLabel.Last()))
+            {
+                CurrentTerm += ".";
+                ResultLabel += ".";
+            }
+        }
+
+        private void InputNumber(ButtonKind kind)
+        {
+            int number = ButtonKindToNumber(kind);
+
+            if (CurrentTerm == "0")
+            {
+                if (kind != ButtonKind.Zero)
+                {
+                    if (ResultLabel == "0")
+                    {
+                        ResultLabel = number.ToString();
+                    }
+                    else
+                    {
+                        ResultLabel += number.ToString();
+                    }
+                    CurrentTerm = number.ToString();
+                }
+            }
+            else
+            {
+                ResultLabel += number.ToString();
+                CurrentTerm += number.ToString();
+            }
         }
     }
 }

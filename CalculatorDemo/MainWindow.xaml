@@ -142,7 +142,7 @@
                     Grid.ColumnSpan="4"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Content="{Binding ResultModel.ResultHistoryLabel}"
+                    Content="{Binding LastResultLabel}"
                     FontWeight="SemiBold"
                     Foreground="Gray" />
 
@@ -152,7 +152,7 @@
                     Grid.ColumnSpan="4"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Content="{Binding ResultModel.ResultLabel}"
+                    Content="{Binding ResultLabel}"
                     FontSize="60"
                     Foreground="#2d3436" />
             </Grid>
@@ -161,6 +161,7 @@
                 x:Name="AC"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
+                Command="{Binding AllClearClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="AC" Foreground="#2d3436" />
@@ -169,6 +170,7 @@
             <Button
                 Grid.Row="1"
                 Grid.Column="2"
+                Command="{Binding ModuloClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="%" Foreground="#2d3436" />
@@ -177,6 +179,7 @@
             <Button
                 Grid.Row="1"
                 Grid.Column="3"
+                Command="{Binding DivideClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="/" Foreground="#2d3436" />
@@ -218,6 +221,7 @@
             <Button
                 Grid.Row="2"
                 Grid.Column="3"
+                Command="{Binding MultiplyClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="*" Foreground="#2d3436" />
@@ -256,6 +260,7 @@
             <Button
                 Grid.Row="3"
                 Grid.Column="3"
+                Command="{Binding SubtractClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="-" Foreground="#2d3436" />
@@ -294,6 +299,7 @@
             <Button
                 Grid.Row="4"
                 Grid.Column="3"
+                Command="{Binding AdditionClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="+" Foreground="#2d3436" />
@@ -313,6 +319,7 @@
             <Button
                 Grid.Row="5"
                 Grid.Column="2"
+                Command="{Binding DotClick}"
                 Style="{StaticResource OperatorButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="." Foreground="#2d3436" />
@@ -322,6 +329,7 @@
             <Button
                 Grid.Row="5"
                 Grid.Column="3"
+                Command="{Binding EqualClick}"
                 Style="{StaticResource EqualButtonStyle}">
                 <Viewbox Stretch="Uniform">
                     <Label Content="=" Foreground="#2d3436" />
