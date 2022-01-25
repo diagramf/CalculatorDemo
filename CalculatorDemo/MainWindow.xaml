@@ -143,6 +143,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Content="{Binding LastResultLabel}"
+                    FontSize="15"
                     FontWeight="SemiBold"
                     Foreground="Gray" />
 

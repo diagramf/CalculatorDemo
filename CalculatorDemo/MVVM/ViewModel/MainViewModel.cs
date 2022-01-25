@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CalculatorDemo.Core;
 using CalculatorDemo.MVVM.Model;
-using ExpressionEvalutor;
 
 namespace CalculatorDemo.MVVM.ViewModel
 {
@@ -34,7 +29,6 @@ namespace CalculatorDemo.MVVM.ViewModel
         public RelayCommand EqualClick { get; set; }
         public RelayCommand AllClearClick { get; set; }
 
-        public ExpressionModel Expression { get; set; }
         public ExpressionHistoryModel ExpressionHistory { get; set; }
 
         public string CurrentTerm { get; set; }
@@ -49,15 +43,16 @@ namespace CalculatorDemo.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        private string _lastResultLabel;
         public string LastResultLabel
         {
-            get
+            get => _lastResultLabel;
+
+            set
             {
-                if (ExpressionHistory.LastExpression != null)
-                {
-                    return "ok";
-                }
-                return "";
+                _lastResultLabel = value;
+                OnPropertyChanged();
             }
         }
 
@@ -91,7 +86,7 @@ namespace CalculatorDemo.MVVM.ViewModel
 
             ExpressionHistory = new ExpressionHistoryModel()
             {
-                ExpressionHistory = new ObservableCollection<ExpressionModel>()
+                History = new ObservableCollection<ExpressionModel>()
             };
 
 
@@ -165,8 +160,10 @@ namespace CalculatorDemo.MVVM.ViewModel
         {
             if (char.IsDigit(ResultLabel.Last()))
             {
-                SyntaxTree syntaxTree = SyntaxTree.Parse(ResultLabel);
-                ResultLabel = new Evalutor(syntaxTree.Root).Evalute().ToString();
+                ExpressionHistory.History.Add(new ExpressionModel(ResultLabel));
+                LastResultLabel = ExpressionHistory.LastExpression.Expression.ToStringExpression() + " =";
+
+                ResultLabel = ExpressionHistory.LastExpression.Expression.Evalute().ToString();
                 CurrentTerm = ResultLabel;
             }
         }
@@ -175,6 +172,7 @@ namespace CalculatorDemo.MVVM.ViewModel
         {
             ResultLabel = "0";
             CurrentTerm = "0";
+            LastResultLabel = "";
         }
 
         private void InputBinaryExpression(ButtonKind kind)

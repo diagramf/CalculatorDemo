@@ -9,8 +9,8 @@ namespace CalculatorDemo.MVVM.Model
 {
     public sealed class ExpressionHistoryModel
     {
-        public ObservableCollection<ExpressionModel> ExpressionHistory { get; set; }
+        public ObservableCollection<ExpressionModel> History { get; set; }
 
-        public ExpressionModel LastExpression => ExpressionHistory.LastOrDefault();
+        public ExpressionModel LastExpression => History.LastOrDefault();
     }
 }
