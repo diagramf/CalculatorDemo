@@ -15,42 +15,26 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <SolidColorBrush x:Key="NumberButtonBackColor" Color="#dfe6e9" />
-        <SolidColorBrush x:Key="OperatorButtonBackColor" Color="#b2bec3" />
-        <SolidColorBrush x:Key="EqualButtonBackColor" Color="#e67e22" />
-        <Style x:Key="OperatorButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource OperatorButtonBackColor}" />
+        <Style
+            x:Key="OperatorButtonStyle"
+            BasedOn="{StaticResource CalculatorButton}"
+            TargetType="Button">
+            <Setter Property="Background" Value="#b2bec3" />
             <Setter Property="Foreground" Value="#2d3436" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="2" />
+        </Style>
+        <Style
+            x:Key="NumberButtonStyle"
+            BasedOn="{StaticResource CalculatorButton}"
+            TargetType="Button">
+            <Setter Property="Background" Value="#dfe6e9" />
+            <Setter Property="Foreground" Value="#2d3436" />
         </Style>
         <Style
             x:Key="EqualButtonStyle"
             BasedOn="{StaticResource OperatorButtonStyle}"
             TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource EqualButtonBackColor}" />
+            <Setter Property="Background" Value="#e67e22" />
         </Style>
-        <Style x:Key="NumberButtonStyle" TargetType="Button">
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Background" Value="{StaticResource NumberButtonBackColor}" />
-            <Setter Property="Foreground" Value="#2d3436" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
-                            <ContentPresenter />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value="#CDD2D4" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
     </Window.Resources>
 
     <Grid>
@@ -137,25 +121,32 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Label
-                    x:Name="ResultHistoryLabel"
-                    Grid.ColumnSpan="4"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Content="{Binding LastResultLabel}"
-                    FontSize="15"
-                    FontWeight="SemiBold"
-                    Foreground="Gray" />
+                <Viewbox Grid.ColumnSpan="4" HorizontalAlignment="Right">
+                    <Label
+                        x:Name="ResultHistoryLabel"
+                        Grid.ColumnSpan="4"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Content="{Binding LastResultLabel}"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        Foreground="Gray" />
+                </Viewbox>
 
-                <Label
-                    x:Name="ResultLabel"
+
+                <Viewbox
                     Grid.Row="1"
                     Grid.ColumnSpan="4"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Content="{Binding ResultLabel}"
-                    FontSize="60"
-                    Foreground="#2d3436" />
+                    HorizontalAlignment="Right">
+                    <Label
+                        x:Name="ResultLabel"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Content="{Binding ResultLabel}"
+                        FontSize="60"
+                        Foreground="#2d3436" />
+                </Viewbox>
+
             </Grid>
 
             <Button
